@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SEO × LLMO チェッカー</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="app-header">
+    <h1>SEO × LLMO チェッカー</h1>
+    <p class="subtitle">URLを入力してSEO対策とLLMO(生成AI最適化)対策を検証します</p>
+  </header>
+
+  <main class="container">
+    <section class="card form-card">
+      <form id="check-form">
+        <div class="field">
+          <label for="url">チェックするURL</label>
+          <input type="text" id="url" name="url" placeholder="https://example.com" required />
+        </div>
+        <div class="field">
+          <label for="competitorUrl">競合URL(任意・比較したい場合に入力)</label>
+          <input type="text" id="competitorUrl" name="competitorUrl" placeholder="https://competitor.com" />
+        </div>
+        <button type="submit" id="submit-btn">チェック実行</button>
+      </form>
+      <p id="status-msg" class="status-msg"></p>
+    </section>
+
+    <section id="result-section" class="result-section hidden"></section>
+
+    <section class="card history-card">
+      <h2>チェック履歴</h2>
+      <div id="history-list">読み込み中...</div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

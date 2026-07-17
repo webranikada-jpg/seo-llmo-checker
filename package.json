@@ -1,0 +1,17 @@
+{
+  "name": "seo-llmo-checker",
+  "version": "1.0.0",
+  "description": "SEO / LLMO checker - URLを入力してSEOおよびLLMO(生成AI最適化)対策を検証するツール",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": "24.x"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "cheerio": "^1.0.0"
+  }
+}
