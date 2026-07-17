@@ -1,7 +1,11 @@
+const fs = require("fs");
 const path = require("path");
 const { DatabaseSync } = require("node:sqlite");
 
-const dbPath = path.join(__dirname, "..", "data", "history.sqlite");
+const dataDir = path.join(__dirname, "..", "data");
+fs.mkdirSync(dataDir, { recursive: true });
+
+const dbPath = path.join(dataDir, "history.sqlite");
 const db = new DatabaseSync(dbPath);
 
 db.exec(`
