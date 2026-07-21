@@ -119,6 +119,24 @@ table.checklist th { color: var(--muted); font-weight: 600; font-size: 0.78rem; 
 
 .suggestion-text { color: var(--primary); }
 
+.section-desc { color: var(--muted); font-size: 0.85rem; margin: -4px 0 16px; }
+
+.term-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+.term-chip {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+.term-chip .count { color: var(--muted); margin-left: 4px; }
+
 .status-pill {
   display: inline-flex;
   align-items: center;

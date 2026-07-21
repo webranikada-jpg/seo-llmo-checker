@@ -1,7 +1,11 @@
 const express = require("express");
 const path = require("path");
 const { analyzeUrl } = require("./src/checker");
+const { analyzeKeyword, getTokenizer } = require("./src/keywordAnalyzer");
 const { insertCheck, listChecks, getCheck } = require("./src/db");
+
+// 初回リクエストが遅くならないよう起動時に形態素解析辞書を読み込んでおく
+getTokenizer().catch((err) => console.error("kuromoji init failed:", err.message));
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -30,6 +34,23 @@ app.post("/api/check", async (req, res) => {
     });
 
     res.json({ id, main, competitor });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post("/api/keyword-analysis", async (req, res) => {
+  const { url, keyword } = req.body || {};
+  if (!url || typeof url !== "string") {
+    return res.status(400).json({ error: "urlを指定してください" });
+  }
+  if (!keyword || typeof keyword !== "string") {
+    return res.status(400).json({ error: "keywordを指定してください" });
+  }
+
+  try {
+    const result = await analyzeKeyword(url, keyword);
+    res.json(result);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

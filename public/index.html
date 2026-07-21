@@ -30,6 +30,25 @@
 
     <section id="result-section" class="result-section hidden"></section>
 
+    <section class="card form-card">
+      <h2>キーワード分析</h2>
+      <p class="section-desc">狙いたいキーワードを入力すると、ページ内でどの程度対策できているか、関連してよく使われている語句をチェックします。</p>
+      <form id="keyword-form">
+        <div class="field">
+          <label for="kwUrl">分析するURL</label>
+          <input type="text" id="kwUrl" name="kwUrl" placeholder="https://example.com/page" required />
+        </div>
+        <div class="field">
+          <label for="keyword">狙いたいキーワード</label>
+          <input type="text" id="keyword" name="keyword" placeholder="例: 求人 未経験" required />
+        </div>
+        <button type="submit" id="kw-submit-btn">キーワード分析実行</button>
+      </form>
+      <p id="kw-status-msg" class="status-msg"></p>
+    </section>
+
+    <section id="kw-result-section" class="result-section hidden"></section>
+
     <section class="card history-card">
       <h2>チェック履歴</h2>
       <div id="history-list">読み込み中...</div>

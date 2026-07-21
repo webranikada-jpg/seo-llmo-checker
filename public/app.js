@@ -4,6 +4,11 @@ const statusMsg = document.getElementById("status-msg");
 const resultSection = document.getElementById("result-section");
 const historyList = document.getElementById("history-list");
 
+const kwForm = document.getElementById("keyword-form");
+const kwSubmitBtn = document.getElementById("kw-submit-btn");
+const kwStatusMsg = document.getElementById("kw-status-msg");
+const kwResultSection = document.getElementById("kw-result-section");
+
 const STATUS_LABEL = { pass: "OK", warn: "要改善", fail: "NG" };
 const CATEGORY_LABEL = { seo: "SEO", llmo: "LLMO(生成AI最適化)" };
 
@@ -203,6 +208,99 @@ form.addEventListener("submit", async (e) => {
     statusMsg.classList.add("error");
   } finally {
     submitBtn.disabled = false;
+  }
+});
+
+function renderKeywordResult(data) {
+  if (data.error) {
+    kwResultSection.innerHTML = `<section class="card"><p class="status-msg error">${escapeHtml(data.error)}</p></section>`;
+    kwResultSection.classList.remove("hidden");
+    return;
+  }
+
+  const rows = data.checks
+    .map(
+      (item) => `
+      <tr>
+        <td>${escapeHtml(item.label)}</td>
+        <td>${pill(item.status)}</td>
+        <td class="detail-text">${escapeHtml(item.detail)}</td>
+        <td class="suggestion-text">${item.status !== "pass" ? escapeHtml(item.suggestion || "") : "-"}</td>
+      </tr>
+    `
+    )
+    .join("");
+
+  const termCloud = data.topTerms.length
+    ? `
+      <div class="term-cloud">
+        ${data.topTerms
+          .map(
+            (t) =>
+              `<span class="term-chip">${escapeHtml(t.phrase)}<span class="count">${t.count}回</span></span>`
+          )
+          .join("")}
+      </div>
+    `
+    : `<p class="detail-text">頻出語を抽出できませんでした</p>`;
+
+  kwResultSection.innerHTML = `
+    <section class="card">
+      <div class="url" style="margin-bottom:4px;">${escapeHtml(data.finalUrl)}</div>
+      <div class="detail-text" style="margin-bottom:10px;">対象キーワード: 「${escapeHtml(data.keyword)}」</div>
+      <div class="score-grid" style="grid-template-columns: 1fr;">
+        <div class="score-box overall">
+          <div class="label">キーワード対策スコア</div>
+          <div class="value" style="color:var(--${scoreClass(data.score)})">${data.score}</div>
+        </div>
+      </div>
+    </section>
+    <section class="card">
+      <div class="category-block" style="margin-top:0;">
+        <h3>キーワード使用状況</h3>
+        <table class="checklist">
+          <thead><tr><th>項目</th><th>判定</th><th>詳細</th><th>改善方法</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+      <div class="category-block">
+        <h3>ページ内でよく使われている語句(対策キーワードのヒント)</h3>
+        <p class="section-desc" style="margin-bottom:6px;">「${escapeHtml(
+          data.keyword
+        )}」以外に、このページが実際にカバーしている話題です。関連キーワードとして対策できていない語句がないか確認してください。</p>
+        ${termCloud}
+      </div>
+    </section>
+  `;
+  kwResultSection.classList.remove("hidden");
+}
+
+kwForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const url = document.getElementById("kwUrl").value.trim();
+  const keyword = document.getElementById("keyword").value.trim();
+
+  kwSubmitBtn.disabled = true;
+  kwStatusMsg.textContent = "分析中です。ページを取得して形態素解析しています...";
+  kwStatusMsg.classList.remove("error");
+  kwResultSection.classList.add("hidden");
+
+  try {
+    const res = await fetch("/api/keyword-analysis", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url, keyword }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "分析に失敗しました");
+
+    kwStatusMsg.textContent = "";
+    renderKeywordResult(data);
+  } catch (err) {
+    kwStatusMsg.textContent = err.message;
+    kwStatusMsg.classList.add("error");
+  } finally {
+    kwSubmitBtn.disabled = false;
   }
 });
 
